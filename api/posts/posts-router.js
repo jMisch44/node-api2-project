@@ -52,15 +52,14 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, contents } = req.body;
-    if (!title || !contents) {
+    if (!req.body.title || !req.body.contents) {
       res.status(400).json({
         message: "Please provide title and contents for the post",
       });
     } else {
-      const updatedPostId = await Posts.update(id, req.body);
-      const updatedPost = await Posts.findById(updatedPostId);
-      if (!updatedPostId) {
+      const updatedPostsId = await Posts.update(id, req.body);
+      const updatedPost = await Posts.findById(updatedPostsId);
+      if (!updatedPostsId) {
         res.status(404).json({
           message: "The post with the specified ID does not exist",
         });
@@ -79,13 +78,12 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Posts.findById(id);
-    if (!post) {
+    const removedPost = await Posts.remove(id);
+    if (!removedPost) {
       res.status(404).json({
         message: "The post with the specified ID does not exist",
       });
     } else {
-      const removedPost = await Posts.remove(id);
-      console.log(removedPost);
       res.status(200).json(post);
     }
   } catch (err) {
